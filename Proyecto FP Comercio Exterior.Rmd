@@ -30,3 +30,18 @@ plot(pressure)
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
 
+```{r}
+## Se inicia con la revision de los archivos que el INE para Imports y Exports
+
+#1. Se bajan los archivos desde el sitio del INE, los archivos de imports se ven bastante uniformes, unos se deben transformar a hoja de calculo de excel, pero, en la parte de exports, el archivo que se debe transformar inicialmente para que sea igual a los demas archivos.
+
+#2. Esta transformacion se hara en excel, ya que la estrategia sera establecer una sola base de datos para imports y exports para que desde un solo data set se puedan hacer las consultas.
+
+
+
+
+
+
+
+```
+
