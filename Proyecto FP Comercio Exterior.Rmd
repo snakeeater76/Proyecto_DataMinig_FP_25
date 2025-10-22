@@ -37,11 +37,48 @@ Note that the `echo = FALSE` parameter was added to the code chunk to prevent pr
 
 #2. Esta transformacion se hara en excel, ya que la estrategia sera establecer una sola base de datos para imports y exports para que desde un solo data set se puedan hacer las consultas.
 
+21-10-2025
+
+#3. Se revisa cada hoja de excel y se evidencia que hay diferencias, en algunos casos de fondo:
+    
+    #a. En el año 2022 y 2023 no existe la columna MES, lo que ya de por si limita el analisis o encontrar un patron que podria         ser fundamental.
+    #b. Cada archivo, difiere en la cantidad de filas, sin embargo, aca el uso de la columna año es fundamental para segmentar
+    #c. En el año 23, se elimina una columna que se llama "CodigoTipoDeComercio", ya que unicamente contiene 0´s.
+    
+#Como se menciono se buscara limpiar la data dentro de Excel, pero, en R se trabajaara la integración para crear datasets.
+
+library(readxl)
+library(dplyr)
+
+ruta <- "C:/Users/fredy/Documents/Maestria Ciencias Computacion Ciencia Datos/4. Cuarto Trimestre/Introduccion Mineria de Datos/Proyecto Final/Fase 1/Importaciones"
 
 
+archivos_ini <- list.files(path = ruta, pattern = "\\.xlsx$", full.names = TRUE)
+print(archivos_ini)
 
+#Uniendo todos los archivos
+dataset_imports <- archivos_ini %>%
+  lapply(read_excel) %>%
+  bind_rows()
+  print(dataset_imports)
+  
+#Se hace un primer intento de juntar todos los datasets pero emite un error, se vuele a revisar los datos y se estandarizan los encabezados, se va con segunda iteracion.
+  
+  ruta <- "C:/Users/fredy/Documents/Maestria Ciencias Computacion Ciencia Datos/4. Cuarto Trimestre/Introduccion Mineria de Datos/Proyecto Final/Fase 1/Importaciones"
 
+archivos_ini <- list.files(path = ruta, pattern = "\\.xlsx$", full.names = TRUE)
+print(archivos_ini)
 
+#Uniendo todos los archivos
+dataset_imports <- archivos_ini %>%
+  lapply(read_excel) %>%
+  bind_rows()
+  print(dataset_imports)
+  
+  
+  
+  
+  
 
 ```
 
