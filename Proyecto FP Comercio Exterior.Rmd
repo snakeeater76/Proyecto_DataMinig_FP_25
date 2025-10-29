@@ -63,8 +63,12 @@ dataset_imports <- archivos_ini %>%
   print(dataset_imports)
   
 #Se hace un primer intento de juntar todos los datasets pero emite un error, se vuele a revisar los datos y se estandarizan los encabezados, se va con segunda iteracion.
+
+library(readxl)
+library(dplyr)
+
   
-  ruta <- "C:/Users/fredy/Documents/Maestria Ciencias Computacion Ciencia Datos/4. Cuarto Trimestre/Introduccion Mineria de Datos/Proyecto Final/Fase 1/Importaciones"
+ruta <- "C:/Users/fredy/Documents/Maestria Ciencias Computacion Ciencia Datos/4. Cuarto Trimestre/Introduccion Mineria de Datos/Proyecto Final/Fase 1/Importaciones"
 
 archivos_ini <- list.files(path = ruta, pattern = "\\.xlsx$", full.names = TRUE)
 print(archivos_ini)
@@ -100,10 +104,11 @@ dataset_exports <- archivos_ini1 %>%
   bind_rows()
   print(dataset_exports)
 
-
 ```
 ```{r}
 #Aplicacion de Apriori al dataset de Imports
+
+options(scipen = 999)
 
 library(arules)
 
@@ -112,5 +117,79 @@ reglasimport <- apriori(dataset_imports, parameter = list(support=0.2, confidenc
 inspect(reglasimport[0:28])
 
 ```
+
+#En el excel se muestran las reglas para su interpretacion.
+
+
+```{r}
+
+#Aplicacion de Apriori al dataset de Exports
+
+library(arules)
+
+reglasexport <- apriori(dataset_exports, parameter = list(support=0.2, confidence = 0.5))
+
+inspect(reglasexport[0:40])
+
+```
+
+#En el excel se muestran las reglas para su interpretacion.
+
+
+```{r}
+#Aplicacion del algoritmo FPGrowht
+#IMPORTS
+library(arules)
+library(fim4r)
+library(readxl)
+
+options(scipen = 999)
+
+reglasfp_import <- fim4r(dataset_imports, method = "fpgrowth", target = "rules", support = .2, confidence = .5)
+
+inspect(reglasfp_import[0:28])
+
+#En el excel se estearan revisando e interpretando las relgas obtenidas
+
+```
+
+```{r}
+#Aplicacion del algoritmo FPGrowht
+#EXPORTS
+library(arules)
+library(fim4r)
+library(readxl)
+
+options(scipen = 99999)
+
+reglasfp_export <- fim4r(dataset_exports, method = "fpgrowth", target = "rules", support = .2, confidence = .5)
+
+inspect(reglasfp_export[0:40])
+
+#En el excel se estearan revisando e interpretando las relgas obtenidas
+
+
+
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
