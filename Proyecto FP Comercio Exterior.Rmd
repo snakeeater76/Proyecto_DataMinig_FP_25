@@ -1,73 +1,41 @@
 ---
-title: "Proyecto DataMining 2025"
+title: "Proyecto DataMining 2025 - COMERCIO EXTERIOR"
 author: "Fredy Picen"
 date: "2025-10-20"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
-
-
-```{r}
-## Se inicia con la revision de los archivos que el INE para Imports y Exports
-
-#1. Se bajan los archivos desde el sitio del INE, los archivos de imports se ven bastante uniformes, unos se deben transformar a hoja de calculo de excel, pero, en la parte de exports, el archivo que se debe transformar inicialmente para que sea igual a los demas archivos.
-
-#2. Esta transformacion se hara en excel, ya que la estrategia sera establecer una sola base de datos para imports y exports para que desde un solo data set se puedan hacer las consultas.
-
-21-10-2025
-
-#3. Se revisa cada hoja de excel y se evidencia que hay diferencias, en algunos casos de fondo:
-    
-    #a. En el año 2022 y 2023 no existe la columna MES, lo que ya de por si limita el analisis o encontrar un patron que podria         ser fundamental.
-    #b. Cada archivo, difiere en la cantidad de filas, sin embargo, aca el uso de la columna año es fundamental para segmentar
-    #c. En el año 23, se elimina una columna que se llama "CodigoTipoDeComercio", ya que unicamente contiene 0´s.
-    
-#Como se menciono se buscara limpiar la data dentro de Excel, pero, en R se trabajaara la integración para crear datasets.
-
+```{r Setup, include= FALSE}
 library(readxl)
 library(dplyr)
+library(arules)
+library(fim4r)
+library(ggplot2)
+library(knitr)
+opts_chunk$set(echo = TRUE)
+```
 
-ruta <- "C:/Users/fredy/Documents/Maestria Ciencias Computacion Ciencia Datos/4. Cuarto Trimestre/Introduccion Mineria de Datos/Proyecto Final/Fase 1/Importaciones"
+
+## PRIMEROS PASOS 
+
+Se inicia con la revision de los archivos que el INE para Imports y Exports [Datasets INE](https://datos.ine.gob.gt/organization/unidad-de-estadisticas-de-comercio-exterior).
 
 
-archivos_ini <- list.files(path = ruta, pattern = "\\.xlsx$", full.names = TRUE)
-print(archivos_ini)
+1. Se bajan los archivos desde el sitio del INE, los archivos de imports se ven bastante uniformes, unos se deben transformar a hoja de calculo de excel, pero, en la parte de exports, el archivo que se debe transformar inicialmente para que sea igual a los demas archivos.
 
-#Uniendo todos los archivos
-dataset_imports <- archivos_ini %>%
-  lapply(read_excel) %>%
-  bind_rows()
-  print(dataset_imports)
-  
-#Se hace un primer intento de juntar todos los datasets pero emite un error, se vuele a revisar los datos y se estandarizan los encabezados, se va con segunda iteracion.
+2. Esta transformacion se hara en excel, ya que la estrategia sera establecer una sola base de datos para imports y exports para que desde un solo data set se puedan hacer las consultas.
 
-library(readxl)
-library(dplyr)
+3. Se revisa cada hoja de excel y se evidencia que hay diferencias, en algunos casos de fondo:
+    
+    a. En el año 2022 y 2023 no existe la columna MES, lo que ya de por si limita el analisis o encontrar un patron que podria         ser fundamental.
+    b. Cada archivo, difiere en la cantidad de filas, sin embargo, aca el uso de la columna año es fundamental para segmentar
+    c. En el año 23, se elimina una columna que se llama "CodigoTipoDeComercio", ya que unicamente contiene 0´s.
+    d. Se detecto que en el archivo del año 2024, de importaciones, hay 6 columnas "ocualtas", probablemente de datos que previamente se tenian pero no se agregaron al dataset,        estas columnas aunque no estan visibles, deben ser eliminadas de ese dataset para que la seccion de importaciones este completamente limpia.
+    
+Como se menciono se buscara limpiar la data dentro de Excel, pero, en R se trabajaara la integración para crear datasets.
 
-  
+```{r Integracion ds IMPORTS, eval=FALSE}
+
 ruta <- "C:/Users/fredy/Documents/Maestria Ciencias Computacion Ciencia Datos/4. Cuarto Trimestre/Introduccion Mineria de Datos/Proyecto Final/Fase 1/Importaciones"
 
 archivos_ini <- list.files(path = ruta, pattern = "\\.xlsx$", full.names = TRUE)
@@ -79,17 +47,11 @@ dataset_imports <- archivos_ini %>%
   bind_rows()
   print(dataset_imports)
   
-  
-  
-  
-  
-
 ```
 
-```{r}
-#22-101-2025
 #Se crea el dataset Exports
 
+```{r Integracion ds EXPORTS, eval=FALSE}
 library(readxl)
 library(dplyr)
 
@@ -105,8 +67,9 @@ dataset_exports <- archivos_ini1 %>%
   print(dataset_exports)
 
 ```
-```{r}
 #Aplicacion de Apriori al dataset de Imports
+
+```{r eval=FALSE}
 
 options(scipen = 999)
 
@@ -118,13 +81,9 @@ inspect(reglasimport[0:28])
 
 ```
 
-#En el excel se muestran las reglas para su interpretacion.
-
-
-```{r}
-
 #Aplicacion de Apriori al dataset de Exports
 
+```{r eval=FALSE}
 library(arules)
 
 reglasexport <- apriori(dataset_exports, parameter = list(support=0.2, confidence = 0.5))
@@ -133,12 +92,9 @@ inspect(reglasexport[0:40])
 
 ```
 
-#En el excel se muestran las reglas para su interpretacion.
+#Aplicacion del algoritmo FPGrowht - IMPORTS
 
-
-```{r}
-#Aplicacion del algoritmo FPGrowht
-#IMPORTS
+```{r eval=FALSE}
 library(arules)
 library(fim4r)
 library(readxl)
@@ -149,13 +105,12 @@ reglasfp_import <- fim4r(dataset_imports, method = "fpgrowth", target = "rules",
 
 inspect(reglasfp_import[0:28])
 
-#En el excel se estearan revisando e interpretando las relgas obtenidas
-
 ```
 
-```{r}
-#Aplicacion del algoritmo FPGrowht
-#EXPORTS
+#Aplicacion del algoritmo FPGrowht - EXPORTS
+
+```{r eval=FALSE}
+
 library(arules)
 library(fim4r)
 library(readxl)
@@ -166,16 +121,45 @@ reglasfp_export <- fim4r(dataset_exports, method = "fpgrowth", target = "rules",
 
 inspect(reglasfp_export[0:40])
 
-#En el excel se estearan revisando e interpretando las relgas obtenidas
+```
 
+#En esta sección se estará aplicando el algoritmo Kmeans - IMPORTS
 
+```{r eval=FALSE}
 
+library(arules)
+library(ggplot2)
 
+data2 <- subset(dataset_imports, VALOR < 180000000)
+data2 <- subset(dataset_imports, PESO < 180000000)
+cluster_import <- kmeans(data2, centers = 4)
 
+ggplot(data2, aes(x= VALOR, y= PESO, color= as.factor(cluster_import$cluster))) +
+geom_point() +
+geom_point(data = as.data.frame(cluster_import$center), aes(x= VALOR, y= PESO), color= "black", size = 4, shape = 17) + 
+labs(title= "VALOR VS PESO") +
+theme_light()
+
+```
+#En esta sección se estará aplicando el algoritmo Kmeans - Exports
+
+```{r eval=FALSE}
+library(arules)
+library(ggplot2)
+
+data3 <- subset(dataset_exports, VALOR < 250000000)
+data3 <- subset(dataset_exports, PESO < 100000000)
+
+cluster_export <- kmeans(data3, centers = 4)
+
+ggplot(data3, aes(x= VALOR, y= PESO, color= as.factor(cluster_export$cluster))) +
+geom_point() +
+geom_point(data = as.data.frame(cluster_export$center), aes(x= VALOR, y= PESO), color= "black", size = 4, shape = 17) + 
+labs(title= "VALOR VS PESO") +
+theme_light()
 
 
 ```
-
 
 
 
