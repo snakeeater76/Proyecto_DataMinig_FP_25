@@ -185,14 +185,18 @@ labs(title= "VALOR VS PESO") +
 theme_light()
 
 ```
-#En esta sección se estará aplicando el algoritmo Kmeans - Exports
+*Se aplica el algoritmo Kmeans - Exports*
 
 ```{r eval=FALSE}
+
+#Basicamente se aplican los mismo pasos del algoritmo anterior.
+
 library(arules)
 library(ggplot2)
 
+#Se deben tomar las mismas consideraciones para que la ejecución se pueda adaptar a nuestra necesidad.
+
 data3 <- subset(dataset_exports, VALOR < 250000000 & PESO < 10000000)
-#data3 <- subset(dataset_exports, PESO < 10000000)
 
 cluster_export <- kmeans(data3, centers = 4)
 
