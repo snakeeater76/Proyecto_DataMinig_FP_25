@@ -1,12 +1,14 @@
 ---
-title: "Proyecto Comercio - FASE 2 - 2018 - 2024"
+Title: "Proyecto Comercio - FASE 2 - 2018 - 2024"
 author: "Fredy Picen"
 date: "2025-11-25"
 output: html_document
 ---
 
 ```{r setup, eval=FALSE}
+
 #Librerias
+
 library(readxl)
 library(arules)
 library(genero)
@@ -19,8 +21,8 @@ library(arules)
 library(ggplot2)
 library(knitr)
 opts_chunk$set(echo = TRUE)
-
 knitr::opts_chunk$set(echo = TRUE)
+
 ```
 
 
@@ -57,12 +59,11 @@ dataset_exports <- archivos_ini1 %>%
 
 ```
 
-*Prediccion por Arboles de Decision*
+**Arboles de Decision**
 
-```{r Arboles de Decision Import, eval=FALSE}
-#Se buscara predecir si una importacion de cierta SAC viene de una geografia en especifico.
+```{r Arboles de Decision DS Import, eval=FALSE}
+# Exploración inicial de la variable objetivo
 
-# EXploración inicial de la variable objetivo
 cat("Distribución de Pais:\n")
 table(dataset_imports$PAIS)
 cat("\n")
@@ -71,10 +72,9 @@ cat("\n")
 ```{r, eval=FALSE}
 # ÁRBOL DE DECISIÓN
 
-# relación víctima-agresor basado en:
-# - características de la víctima (sexo, edad, escolaridad, estado civil)
-# - características del agresor (sexo, edad, escolaridad)
-# - contexto del hecho (área, departamento)
+# relación PAIS-IMPORTACIONES basado en:
+# - características de la importacion (Valor, Peso, Via, Aduana, Sac, Mes y Año)
+# - con esto, la prediccion sera mas soportada y nos dara informacion relevante.
 
 tree <- rpart(PAIS ~
               VALOR +
@@ -96,22 +96,12 @@ tree <- rpart(PAIS ~
 ```
 
 ```{r, eval=FALSE}
-rpart.plot(tree, 
-           type = 4,              
-           extra = 2,
-           under = FALSE,         
-           fallen.leaves = TRUE, 
-           box.palette = "RdYlGn",
-           main = "",
-           cex = 0.8,
-           tweak = 1.3,
-           clip.right.labs = FALSE,
-           varlen = 0,
-           faclen = 0)
+#Graficando el arbol de decision.
 
 rpart.plot(tree, type = 2, extra = 0, under = TRUE, box.palette = "BuGn",
             main= "PAIS", cex= 0.5)
 
+#El resultado evidencia que con base en el pais, el arbol crece en funcion de la aduana, evidenciando que efectivamente las rutas tiene una relevancia incluso desde que procedencia es la carga.
 
 
 ```
@@ -119,19 +109,24 @@ rpart.plot(tree, type = 2, extra = 0, under = TRUE, box.palette = "BuGn",
 cat("\nImportancia de las variables:\n")
 print(tree$variable.importance)
 
-cat("\n=== RESUMEN DEL MODELO ===\n")
+cat("\n ---- RESUMEN DEL MODELO ---- \n")
 print(summary(tree))
+
+## A continuacion, el codigo anteirior nos dara inshights o referencias relevantes del arbol lo que nos puede 
 
 ```
 ```{r, eval=FALSE}
+
+# - Se realiza la prediccion
+
 Importp <- data.frame(
     VALOR = 10000000,
     PESO = 20000000,
     VIA = 3,
     ADUANA = 11,
-    SAC = 3917322000,
-    MES = 11,
-    ANYO = 2019
+    SAC = 8465,
+    MES = 8,
+    ANYO = 2018
 )
 
 ```
@@ -154,10 +149,13 @@ cat("\n")
 
 ```{r, eval=FALSE}
 
+##Presentacion del resultado de la prediccion
+
 cat("Probabilidades de Pais:\n")
 print(round(predic * 100, 2))
 
-# identificar la relación más probable
+# El codigo de abajo filtra y nos permite identificar la relación más probable
+
 relacion_antic <- colnames(predic)[which.max(predic)]
 prob_maxima <- max(predic) * 100
 
@@ -171,9 +169,8 @@ cat("\nProbabilidad:", round(prob_maxima, 2), "%\n")
 **VARIABLE 2**
 
 ```{r Arboles de Decision 2, eval=FALSE}
-#Se buscara predecir si una importacion de cierta SAC viene de una geografia en especifico.
-
 # EXploración inicial de la variable objetivo
+
 cat("Distribución de SAC:\n")
 table(dataset_imports$SAC)
 cat("\n")
@@ -183,10 +180,9 @@ cat("\n")
 ```{r, eval=FALSE}
 # ÁRBOL DE DECISIÓN
 
-# relación víctima-agresor basado en:
-# - características de la víctima (sexo, edad, escolaridad, estado civil)
-# - características del agresor (sexo, edad, escolaridad)
-# - contexto del hecho (área, departamento)
+# relación SAC-IMPORTACIONES basado en:
+# - características de la importacion (Valor, Peso, Via, Aduana, Pais, Mes y Año)
+# - con esto, la prediccion sera mas soportada y nos dara informacion relevante.
 
 tree2 <- rpart(SAC ~
               VALOR +
@@ -208,22 +204,11 @@ tree2 <- rpart(SAC ~
 ```
 
 ```{r, eval=FALSE}
-rpart.plot(tree2, 
-           type = 4,              
-           extra = 2,
-           under = FALSE,         
-           fallen.leaves = TRUE, 
-           box.palette = "RdYlGn",
-           main = "",
-           cex = 0.8,
-           tweak = 1.3,
-           clip.right.labs = FALSE,
-           varlen = 0,
-           faclen = 0)
 
 rpart.plot(tree2, type = 2, extra = 0, under = TRUE, box.palette = "BuGn",
             main= "SAC", cex= 0.5)
 
+#El resultado evidencia que con base en el la SAC(Partida Arancelaria), no genera un arbol.
 
 
 ```
@@ -233,11 +218,14 @@ rpart.plot(tree2, type = 2, extra = 0, under = TRUE, box.palette = "BuGn",
 cat("\nImportancia de las variables:\n")
 print(tree2$variable.importance)
 
-cat("\n=== RESUMEN DEL MODELO ===\n")
+cat("\n---- RESUMEN DEL MODELO ---- \n")
 print(summary(tree2))
 
 ```
+
+
 ```{r, eval=FALSE}
+
 Importp1 <- data.frame(
     VALOR = 1000000,
     PESO = 20000,
@@ -282,12 +270,12 @@ cat("\nProbabilidad:", round(prob_maxima1, 2), "%\n")
 
 ```
 
-**vAR 3**
+**VARIABLE 3**
 
 ```{r Arboles de Decision3, eval=FALSE}
-#Se buscara predecir si una importacion de cierta SAC viene de una geografia en especifico.
 
 # EXploración inicial de la variable objetivo
+
 cat("Distribución de ADUANA:\n")
 table(dataset_imports$ADUANA)
 cat("\n")
@@ -295,12 +283,13 @@ cat("\n")
 ```
 
 ```{r, eval=FALSE}
+
 # ÁRBOL DE DECISIÓN
 
-# relación víctima-agresor basado en:
-# - características de la víctima (sexo, edad, escolaridad, estado civil)
-# - características del agresor (sexo, edad, escolaridad)
-# - contexto del hecho (área, departamento)
+# relación SAC-IMPORTACIONES basado en:
+# - características de la importacion (Valor, Peso, Via, Aduana, Pais, Mes y Año)
+# - con esto, la prediccion sera mas soportada y nos dara informacion relevante.
+
 
 tree3 <- rpart(ADUANA ~
               VALOR +
@@ -322,45 +311,37 @@ tree3 <- rpart(ADUANA ~
 ```
 
 ```{r, eval=FALSE}
-rpart.plot(tree, 
-           type = 4,              
-           extra = 2,
-           under = FALSE,         
-           fallen.leaves = TRUE, 
-           box.palette = "RdYlGn",
-           main = "",
-           cex = 0.8,
-           tweak = 1.3,
-           clip.right.labs = FALSE,
-           varlen = 0,
-           faclen = 0)
 
 rpart.plot(tree3, type = 2, extra = 0, under = TRUE, box.palette = "BuGn",
             main= "ADUANA", cex= 0.5)
 
-
+#El resultado del grafico evidencia que cuando se evalua el dataset desde la Aduana, la relacion mas fuerte que exite es la Via, esto confirma lo que se enconto en la fase 1 que la infraestructura vial o canales logisticos son de suma importancia.
 
 ```
 
 
 
 ```{r, eval=FALSE}
+
 cat("\nImportancia de las variables:\n")
 print(tree3$variable.importance)
 
-cat("\n=== RESUMEN DEL MODELO ===\n")
+cat("\n---- RESUMEN DEL MODELO ----\n")
 print(summary(tree3))
 
 ```
 
 
 ```{r, eval=FALSE}
+
+#Se buscara predecir la siguiente importacion.
+
 Importp3 <- data.frame(
     VALOR = 10000000,
     PESO = 20000000,
-    VIA = 1,
+    VIA = 3,
     PAIS = 5404,
-    SAC = 3917322000,
+    SAC = 4012,
     MES = 7,
     ANYO = 2024
 )
@@ -368,44 +349,45 @@ Importp3 <- data.frame(
 
 
 ```{r, eval=FALSE}
+
 predic3 <- predict(tree3, Importp3, type = "prob")
 
-cat("\n### PREDICCIÓN PARA PAIS ###\n")
-cat("Valor de la importacion: 100,000 USD\n")
-cat("- Peso de la importacion: 1,200 Kg\n")
-cat("- Medio de Transporte: Aereo\n")
-cat("- Aduana: Express Aereo\n")
-cat("- Sac: Maquinas Herramienta(8465)\n")
-cat("- Mes: Agosto\n")
-cat("- Año: 2018\n")
+cat("\n### PREDICCIÓN PARA ADUANA ###\n")
+cat("- Valor de la importacion: 10,000,000 USD\n")
+cat("- Peso de la importacion: 20,000,000 Kg\n")
+cat("- Medio de Transporte: Marino\n")
+cat("- Pais: China\n")
+cat("- Sac: Neumaticos\n")
+cat("- Mes: Julio\n")
+cat("- Año: 2024 \n")
 cat("\n")
 
 ```
 
 ```{r, eval=FALSE}
+# Se presentan la prediccion para Aduana 
 
-cat("Probabilidades de Pais:\n")
+cat("Probabilidades de Aduana:\n")
 print(round(predic3 * 100, 2))
 
-# identificar la relación más probable
+# Relación más probable
+
 relacion_antic3 <- colnames(predic3)[which.max(predic3)]
 prob_maxima3 <- max(predic3) * 100
 
 cat("\nRelación más probable:", relacion_antic3)
 cat("\nProbabilidad:", round(prob_maxima3, 2), "%\n")
 
+# El puerto que mas se usa para este tipo de importaciones es PUERTO QUETZAL, desde China.
+
 ```
 
-
-
-
-**EXPORT**
-**VAR 4 EXPORTS**
+**ARBO DE DECISION - EXPORT**
+**VARIABLE 4 EXPORTS**
 
 ```{r Arboles de Decision4, eval=FALSE}
-#Se buscara predecir si una importacion de cierta SAC viene de una geografia en especifico.
-
 # EXploración inicials de la variable objetivo
+
 cat("Distribución de SAC:\n")
 table(dataset_exports$SAC)
 cat("\n")
@@ -514,12 +496,11 @@ cat("\nProbabilidad:", round(prob_maxima3, 2), "%\n")
 
 ```
 
-**VAR 5 EXPORTS**
+**VARIABLE 5 EXPORTS**
 
 ```{r Arboles de Decision 5, eval=FALSE}
-#Se buscara predecir si una importacion de cierta SAC viene de una geografia en especifico.
-
 # EXploración inicials de la variable objetivo
+
 cat("Distribución de PAIS:\n")
 table(dataset_exports$PAIS)
 cat("\n")
@@ -529,10 +510,9 @@ cat("\n")
 ```{r, eval=FALSE}
 # ÁRBOL DE DECISIÓN
 
-# relación víctima-agresor basado en:
-# - características de la víctima (sexo, edad, escolaridad, estado civil)
-# - características del agresor (sexo, edad, escolaridad)
-# - contexto del hecho (área, departamento)
+# relación PAIS-EXPORTACIONES basado en:
+# - características de la Exportacion (Valor, Peso, Via, Aduana, Pais, Mes y Año)
+# - con esto, la prediccion sera mas soportada y nos dara informacion relevante.
 
 tree5<- rpart(PAIS ~
               VALOR +
@@ -553,45 +533,38 @@ tree5<- rpart(PAIS ~
 
 ```
 
+
+
 ```{r, eval=FALSE}
-rpart.plot(tree5, 
-           type = 4,              
-           extra = 2,
-           under = FALSE,         
-           fallen.leaves = TRUE, 
-           box.palette = "RdYlGn",
-           main = "",
-           cex = 0.8,
-           tweak = 1.3,
-           clip.right.labs = FALSE,
-           varlen = 0,
-           faclen = 0)
 
 rpart.plot(tree5, type = 2, extra = 0, under = TRUE, box.palette = "BuGn",
             main= "PAIS EXPORT", cex= 0.5)
 
-
+#Para este grafico igualmente que imports, el arbol es grande, sin embargo, sigue siendo la Aduana quien domina como puntos de nodo dentro del arbol.
 
 ```
 
-
-
 ```{r, eval=FALSE}
+
+#Evaluando el detalle del arbol.
+
 cat("\nImportancia de las variables:\n")
 print(tree5$variable.importance)
 
-cat("\n=== RESUMEN DEL MODELO ===\n")
+cat("\n---- RESUMEN DEL MODELO ----\n")
 print(summary(tree5))
 
 ```
 
 
 ```{r, eval=FALSE}
-Importp5 <- data.frame(
+#Se busca la prediccion para la siguiente exportacion
+
+export5 <- data.frame(
     VALOR = 10000000,
-    PESO = 500000000,
+    PESO = 50000000,
     VIA = 3,
-    ADUANA = 11 ,
+    ADUANA = 11,
     SAC = 2940000000,
     MES = 3,
     ANYO = 2023
@@ -600,16 +573,16 @@ Importp5 <- data.frame(
 
 
 ```{r, eval=FALSE}
-predic5 <- predict(tree5, Importp5, type = "prob")
+predic5 <- predict(tree5, export5, type = "prob")
 
-cat("\n### PREDICCIÓN PARA PAIS ###\n")
-cat("Valor de la importacion: 100,000 USD\n")
-cat("- Peso de la importacion: 1,200 Kg\n")
-cat("- Medio de Transporte: Aereo\n")
-cat("- Aduana: Express Aereo\n")
-cat("- Sac: Maquinas Herramienta(8465)\n")
-cat("- Mes: Agosto\n")
-cat("- Año: 2018\n")
+cat("\n### PREDICCIÓN PARA PAIS-EXPORT ###\n")
+cat("Valor de la importacion: 10,000,000 USD\n")
+cat("- Peso de la importacion: 50,000,000 Kg\n")
+cat("- Medio de Transporte: Maritimo\n")
+cat("- Aduana: Santo Tomas de Castilla\n")
+cat("- Sac: Azucar\n")
+cat("- Mes: Marzo\n")
+cat("- Año: 2023\n")
 cat("\n")
 
 ```
@@ -619,22 +592,24 @@ cat("\n")
 cat("Probabilidades de Pais:\n")
 print(round(predic5 * 100, 2))
 
-# identificar la relación más probable
+# Relación más probable
+
 relacion_antic5 <- colnames(predic5)[which.max(predic5)]
 prob_maxima5 <- max(predic5) * 100
 
 cat("\nRelación más probable:", relacion_antic5)
 cat("\nProbabilidad:", round(prob_maxima5, 2), "%\n")
 
+#La prediccion es que con una probabilidad del 27.91% este tipo de producto se exporta a Estados Unidos.
+
 ```
 
 
-**Var 6**
+**VARIABLE 6**
 
 ```{r Arboles de Decision6, eval=FALSE}
-#Se buscara predecir si una importacion de cierta SAC viene de una geografia en especifico.
-
 # EXploración inicials de la variable objetivo
+
 cat("Distribución de ADUANA:\n")
 table(dataset_exports$ADUANA)
 cat("\n")
@@ -644,10 +619,10 @@ cat("\n")
 ```{r, eval=FALSE}
 # ÁRBOL DE DECISIÓN
 
-# relación víctima-agresor basado en:
-# - características de la víctima (sexo, edad, escolaridad, estado civil)
-# - características del agresor (sexo, edad, escolaridad)
-# - contexto del hecho (área, departamento)
+# relación ADUANA-EXPORTACIONES basado en:
+# - características de la Exportacion (Valor, Peso, Via, Aduana, Pais, Mes y Año)
+# - con esto, la prediccion sera mas soportada y nos dara informacion relevante.
+
 
 tree6<- rpart(ADUANA ~
               VALOR +
@@ -669,40 +644,35 @@ tree6<- rpart(ADUANA ~
 ```
 
 ```{r, eval=FALSE}
-rpart.plot(tree5, 
-           type = 4,              
-           extra = 2,
-           under = FALSE,         
-           fallen.leaves = TRUE, 
-           box.palette = "RdYlGn",
-           main = "",
-           cex = 0.8,
-           tweak = 1.3,
-           clip.right.labs = FALSE,
-           varlen = 0,
-           faclen = 0)
 
 rpart.plot(tree6, type = 2, extra = 0, under = TRUE, box.palette = "BuGn",
             main= "ADUANA EXPORT", cex= 0.5)
 
-
+## Al igual que la importaciones, en exportaciones cuando se analiza o predice por medio de Aduana, la Via es la principal, sin embargo, hay una influencia en la ramas secundarias del Pais.
 
 ```
 
 
 
 ```{r, eval=FALSE}
+
+
 cat("\nImportancia de las variables:\n")
 print(tree6$variable.importance)
 
-cat("\n=== RESUMEN DEL MODELO ===\n")
+cat("\n---- RESUMEN DEL MODELO ----\n")
 print(summary(tree6))
+
+##Este analisis da la visibilidad de que el peso de la via y pais es muy cercano y son los que dominan al momento de aplicar este algoritmo.
 
 ```
 
 
 ```{r, eval=FALSE}
-Importp6 <- data.frame(
+
+##Prediccion
+
+exportp6 <- data.frame(
     VALOR = 425038,
     PESO = 142295,
     VIA = 1,
@@ -715,16 +685,16 @@ Importp6 <- data.frame(
 
 
 ```{r, eval=FALSE}
-predic6 <- predict(tree6, Importp6, type = "prob")
+predic6 <- predict(tree6, exportp6, type = "prob")
 
-cat("\n### PREDICCIÓN PARA PAIS ###\n")
-cat("Valor de la importacion: 100,000 USD\n")
-cat("- Peso de la importacion: 1,200 Kg\n")
-cat("- Medio de Transporte: Aereo\n")
-cat("- Aduana: Express Aereo\n")
-cat("- Sac: Maquinas Herramienta(8465)\n")
-cat("- Mes: Agosto\n")
-cat("- Año: 2018\n")
+cat("\n### PREDICCIÓN PARA ADUANA ###\n")
+cat("Valor de la importacion: 425,038 USD\n")
+cat("- Peso de la importacion: 142,295 Kg\n")
+cat("- Medio de Transporte: Terrestre\n")
+cat("- Pais: Mexico\n")
+cat("- Sac: Ganado Bovino\n")
+cat("- Mes: Abril\n")
+cat("- Año: 2024\n")
 cat("\n")
 
 ```
@@ -734,12 +704,15 @@ cat("\n")
 cat("Probabilidades de Pais:\n")
 print(round(predic6 * 100, 2))
 
-# identificar la relación más probable
-relacion_antic6 <- colnames(predic6)[which.max(predic5)]
+# Relación más probable
+
+relacion_antic6 <- colnames(predic6)[which.max(predic6)]
 prob_maxima6 <- max(predic6) * 100
 
 cat("\nRelación más probable:", relacion_antic6)
 cat("\nProbabilidad:", round(prob_maxima6, 2), "%\n")
+
+##El resultado evidencia que la Aduana de Tecun Uman seria con un 97.61% la aduana usada para exportar Ganado a Mexico.
 
 ```
 
