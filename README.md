@@ -5,3 +5,11 @@ A Partir del 22/10 se esta iniciando a aplicar los algoritmos
   - FP Growth
   - KMeans
 Se logro de todos los archivos unirlos en uno solo por Importaciones y Exportaciones.
+
+##Proyecto Fase # 2
+
+Como segunda fase, se aplicaran los siguientes algoritmos:
+-  Arboles de Decision - En R
+-  Random Forest - En R
+-  Red Neuronal - en Python por medio de Google Colab.
+
