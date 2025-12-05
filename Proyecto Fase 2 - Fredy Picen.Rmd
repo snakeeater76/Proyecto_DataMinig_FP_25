@@ -25,7 +25,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 
-```{r Integracion ds IMPORTS, eval=FALSE}
+```{r Integracion DS IMPORTS, eval=FALSE}
 
 ruta <- "C:/Users/fredy/Documents/Maestria Ciencias Computacion Ciencia Datos/4. Cuarto Trimestre/Introduccion Mineria de Datos/Proyecto Final/Fase 1/Importaciones"
 
@@ -40,7 +40,7 @@ dataset_imports <- archivos_ini %>%
   
 ```
 
-```{r Integracion ds EXPORTS, eval=FALSE}
+```{r Integracion DS EXPORTS, eval=FALSE}
 library(readxl)
 library(dplyr)
 
@@ -802,7 +802,7 @@ plot(forest1)
 ```
 **RandomForest2**
 
-```{r}
+```{r, eval=FALSE}
 
 dataset_exports <- subset(dataset_exports, ANYO >=2020 & ANYO<= 2023)
 
