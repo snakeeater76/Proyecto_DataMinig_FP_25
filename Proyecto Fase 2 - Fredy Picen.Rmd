@@ -720,11 +720,11 @@ cat("\nProbabilidad:", round(prob_maxima6, 2), "%\n")
 
 ```{r, eval=FALSE}
 
+##DEBIDO A LA CANTIDAD TAN GRANDE DE DATOS, MI EQUIPO NO LOGRO MANEJAR EL 100% POR LO QUE SE ESTABLECIO QUE SE HICIERA UNA REDUCCION EN LOS AÑOS, POR LO QUE SE LIMITA EL EL DATASET DEL 2018 AL 2020.
+
 dataset_imports <- subset(dataset_imports, ANYO >=2018 & ANYO<= 2020)
 
 datos <- dataset_imports[,c("PAIS", "SAC", "VALOR", "VIA", "ADUANA")]
-
-#datos <- dataset_imports[,c("PAIS", "SAC", "VALOR", "VIA")]
 
 datos$PAIS <- as.factor(datos$PAIS)
 
@@ -739,6 +739,8 @@ train <- datos[index,]
 test <- datos[-index,]
 train$PAIS <- droplevels(as.factor(train$PAIS))
 
+## SE GENERA EL BOSQUE - Ejecucion 1 h - 44 min
+
 forest1 <- randomForest(PAIS ~
                 SAC +
                 VALOR +
@@ -748,9 +750,7 @@ forest1 <- randomForest(PAIS ~
                 ntree= 200,
                 mtry = 3)
 
-table(datos$PAIS)
-table(train$PAIS)
-levels(train$PAIS)
+#Se diseña la prediccion:
 
 prueba <- predict(forest1,test)
 prueba
@@ -758,21 +758,30 @@ prueba
 matriz <- table(test$PAIS, prueba)
 matriz
 
+# Se arma la importacion a predecir con base en el Random Forest
 
-persona2 <- data.frame (
-  AGR_EDAD = c(18),
-  AGR_TRABAJA = c(2),
-  AGR_DEDICA = c(4), 
-  AGR_ESCOLARIDAD = c(21)
+importt2 <- data.frame (
+  SAC = c(9504),  #Consolas de Videojuegos
+  VALOR = c(1000000),
+  VIA = c(3), # Via maritima
+  ADUANA = c(11) # Santo Tomas
   )
 
-result3 <- predict(forest1,persona2, type="prob")
+result3 <- predict(forest1,importt2, type="prob")
 result3
+
+# Las consolas de videojuego en un 95.5% se importan via miritima de Estados Unidos.
+
+```
+```{r, eval=FALSE}
 
 plot(forest1)
 
 
 ```
+
+
+
 **RandomForest2**
 
 ```{r, eval=FALSE}
