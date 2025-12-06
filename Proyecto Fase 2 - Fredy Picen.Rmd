@@ -42,6 +42,7 @@ dataset_imports <- archivos_ini %>%
   
 ```
 
+
 ```{r Integracion DS EXPORTS, eval=FALSE}
 library(readxl)
 library(dplyr)
@@ -286,7 +287,7 @@ cat("\n")
 
 # ÁRBOL DE DECISIÓN
 
-# relación SAC-IMPORTACIONES basado en:
+# relación ADUANA-IMPORTACIONES basado en:
 # - características de la importacion (Valor, Peso, Via, Aduana, Pais, Mes y Año)
 # - con esto, la prediccion sera mas soportada y nos dara informacion relevante.
 
@@ -774,13 +775,12 @@ result3
 
 ```
 ```{r, eval=FALSE}
+#Se imprime el Random Forest
 
 plot(forest1)
 
 
 ```
-
-
 
 **RandomForest2**
 
@@ -789,8 +789,6 @@ plot(forest1)
 dataset_exports <- subset(dataset_exports, ANYO >=2020 & ANYO<= 2023)
 
 datos2 <- dataset_exports[,c("PAIS", "SAC", "VALOR", "VIA", "ADUANA")]
-
-#datos <- dataset_imports[,c("PAIS", "SAC", "VALOR", "VIA")]
 
 datos2$VIA <- as.factor(datos2$VIA)
 
@@ -803,7 +801,7 @@ index <- sample(1:nrow(datos2), 0.85*nrow(datos2))
 
 train2 <- datos2[index,]
 test2 <- datos2[-index,]
-#train$VIA <- droplevels(as.factor(train2$VIA))
+
 
 forest2 <- randomForest(VIA ~
                 SAC +
@@ -822,17 +820,30 @@ matriz2 <- table(test2$VIA, prueba2)
 matriz2
 
 
+# SE CREA LA EXPORTACION DONDE SE BUSCA PREDECIR LA VIA
+
 export2 <- data.frame (
-  SAC = c(2710192200),
-  VALOR = c(10000000),
-  PAIS = c(3507), 
+  SAC = c(2710192200), # BUNKER C - PARA LA INDUSTRIA ENERGETICA
+  VALOR = c(10000000), 
+  PAIS = c(3507), #Se sabe que Peru es cliente actual de Guatemala.
   ADUANA = c(15)
   )
 
 resultex <- predict(forest2,export2, type="prob")
 resultex
 
+
+
+```
+
+
+
+```{r, eval=FALSE}
+
+#Se imprime el RF
+
 plot(forest2)
+
 
 ```
 
@@ -848,8 +859,6 @@ datos3 <- na.omit(datos3)
 top_sac <- names(sort(table(datos3$SAC), decreasing = TRUE))[1:100]
 datos3 <- datos3 %>% filter(SAC %in% top_sac)
 datos3$SAC <- droplevels(as.factor(datos3$SAC))
-
-#datos3$SAC <- as.factor(datos3$SAC)
 
 set.seed(100)
 
@@ -879,22 +888,31 @@ matriz3 <- table(test3$SAC, prueba3)
 matriz3
 
 
+#SE CREA LA IMPORTACION A PREDECIR
+
 import3 <- data.frame (
-  VIA = c(2),
-  VALOR = c(1000000),
-  PAIS = c(1005), 
-  ADUANA = c(2)
+  VIA = c(1),
+  VALOR = c(1000000), #EN USD
+  PAIS = c(1005), # ESTADOS UNIDOS
+  ADUANA = c(31)  # Tecun Uman
   )
 
 resultim1 <- predict(forest3,import3, type="prob")
 resultim1
 
-plot(forest3)
 
 ```
 
 
 
+```{r, eval=FALSE}
+
+#Se Grafica el RF
+
+plot(forest3)
+
+
+```
 
 
 
