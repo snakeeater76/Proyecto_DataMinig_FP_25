@@ -1,5 +1,5 @@
 ---
-Title: "Proyecto Comercio - FASE 2 - 2018 - 2024"
+title: "Proyecto Comercio - FASE 2 - 2018 - 2024"
 author: "Fredy Picen"
 date: "2025-11-25"
 output: html_document
@@ -25,8 +25,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```
 
-
-
 ```{r Integracion DS IMPORTS, eval=FALSE}
 
 ruta <- "C:/Users/fredy/Documents/Maestria Ciencias Computacion Ciencia Datos/4. Cuarto Trimestre/Introduccion Mineria de Datos/Proyecto Final/Fase 1/Importaciones"
@@ -41,7 +39,6 @@ dataset_imports <- archivos_ini %>%
   print(dataset_imports)
   
 ```
-
 
 ```{r Integracion DS EXPORTS, eval=FALSE}
 library(readxl)
@@ -62,6 +59,8 @@ dataset_exports <- archivos_ini1 %>%
 
 **Arboles de Decision**
 
+**Arbol1**
+
 ```{r Arboles de Decision DS Import, eval=FALSE}
 # Exploración inicial de la variable objetivo
 
@@ -70,6 +69,7 @@ table(dataset_imports$PAIS)
 cat("\n")
 
 ```
+
 ```{r, eval=FALSE}
 # ÁRBOL DE DECISIÓN
 
@@ -106,6 +106,7 @@ rpart.plot(tree, type = 2, extra = 0, under = TRUE, box.palette = "BuGn",
 
 
 ```
+
 ```{r, eval=FALSE}
 cat("\nImportancia de las variables:\n")
 print(tree$variable.importance)
@@ -116,6 +117,7 @@ print(summary(tree))
 ## A continuacion, el codigo anteirior nos dara inshights o referencias relevantes del arbol lo que nos puede 
 
 ```
+
 ```{r, eval=FALSE}
 
 # - Se realiza la prediccion
@@ -131,7 +133,6 @@ Importp <- data.frame(
 )
 
 ```
-
 
 ```{r, eval=FALSE}
 predic <- predict(tree, Importp, type = "prob")
@@ -167,7 +168,7 @@ cat("\nProbabilidad:", round(prob_maxima, 2), "%\n")
 
 ```
 
-**VARIABLE 2**
+**ARBOL 2**
 
 ```{r Arboles de Decision 2, eval=FALSE}
 # EXploración inicial de la variable objetivo
@@ -214,7 +215,6 @@ rpart.plot(tree2, type = 2, extra = 0, under = TRUE, box.palette = "BuGn",
 
 ```
 
-
 ```{r, eval=FALSE}
 cat("\nImportancia de las variables:\n")
 print(tree2$variable.importance)
@@ -223,7 +223,6 @@ cat("\n---- RESUMEN DEL MODELO ---- \n")
 print(summary(tree2))
 
 ```
-
 
 ```{r, eval=FALSE}
 
@@ -238,7 +237,6 @@ Importp1 <- data.frame(
 )
 
 ```
-
 
 ```{r, eval=FALSE}
 predic1 <- predict(tree2, Importp1, type = "prob")
@@ -271,7 +269,7 @@ cat("\nProbabilidad:", round(prob_maxima1, 2), "%\n")
 
 ```
 
-**VARIABLE 3**
+**ARBOL 3**
 
 ```{r Arboles de Decision3, eval=FALSE}
 
@@ -320,8 +318,6 @@ rpart.plot(tree3, type = 2, extra = 0, under = TRUE, box.palette = "BuGn",
 
 ```
 
-
-
 ```{r, eval=FALSE}
 
 cat("\nImportancia de las variables:\n")
@@ -331,7 +327,6 @@ cat("\n---- RESUMEN DEL MODELO ----\n")
 print(summary(tree3))
 
 ```
-
 
 ```{r, eval=FALSE}
 
@@ -347,7 +342,6 @@ Importp3 <- data.frame(
     ANYO = 2024
 )
 ```
-
 
 ```{r, eval=FALSE}
 
@@ -383,8 +377,9 @@ cat("\nProbabilidad:", round(prob_maxima3, 2), "%\n")
 
 ```
 
-**ARBO DE DECISION - EXPORT**
-**VARIABLE 4 EXPORTS**
+**ARBO DE DECISION - EXPORT** 
+
+**ARBOL 4 EXPORTS**
 
 ```{r Arboles de Decision4, eval=FALSE}
 # EXploración inicials de la variable objetivo
@@ -443,8 +438,6 @@ rpart.plot(tree4, type = 2, extra = 0, under = TRUE, box.palette = "BuGn",
 
 ```
 
-
-
 ```{r, eval=FALSE}
 cat("\nImportancia de las variables:\n")
 print(tree4$variable.importance)
@@ -453,7 +446,6 @@ cat("\n=== RESUMEN DEL MODELO ===\n")
 print(summary(tree4))
 
 ```
-
 
 ```{r, eval=FALSE}
 Importp4 <- data.frame(
@@ -466,7 +458,6 @@ Importp4 <- data.frame(
     ANYO = 2024
 )
 ```
-
 
 ```{r, eval=FALSE}
 predic4 <- predict(tree4, Importp4, type = "prob")
@@ -497,7 +488,7 @@ cat("\nProbabilidad:", round(prob_maxima3, 2), "%\n")
 
 ```
 
-**VARIABLE 5 EXPORTS**
+**ARBOL 5 EXPORTS**
 
 ```{r Arboles de Decision 5, eval=FALSE}
 # EXploración inicials de la variable objetivo
@@ -534,8 +525,6 @@ tree5<- rpart(PAIS ~
 
 ```
 
-
-
 ```{r, eval=FALSE}
 
 rpart.plot(tree5, type = 2, extra = 0, under = TRUE, box.palette = "BuGn",
@@ -557,7 +546,6 @@ print(summary(tree5))
 
 ```
 
-
 ```{r, eval=FALSE}
 #Se busca la prediccion para la siguiente exportacion
 
@@ -571,7 +559,6 @@ export5 <- data.frame(
     ANYO = 2023
 )
 ```
-
 
 ```{r, eval=FALSE}
 predic5 <- predict(tree5, export5, type = "prob")
@@ -605,8 +592,7 @@ cat("\nProbabilidad:", round(prob_maxima5, 2), "%\n")
 
 ```
 
-
-**VARIABLE 6**
+**ARBOL 6**
 
 ```{r Arboles de Decision6, eval=FALSE}
 # EXploración inicials de la variable objetivo
@@ -653,8 +639,6 @@ rpart.plot(tree6, type = 2, extra = 0, under = TRUE, box.palette = "BuGn",
 
 ```
 
-
-
 ```{r, eval=FALSE}
 
 
@@ -667,7 +651,6 @@ print(summary(tree6))
 ##Este analisis da la visibilidad de que el peso de la via y pais es muy cercano y son los que dominan al momento de aplicar este algoritmo.
 
 ```
-
 
 ```{r, eval=FALSE}
 
@@ -683,7 +666,6 @@ exportp6 <- data.frame(
     ANYO = 2024
 )
 ```
-
 
 ```{r, eval=FALSE}
 predic6 <- predict(tree6, exportp6, type = "prob")
@@ -718,6 +700,8 @@ cat("\nProbabilidad:", round(prob_maxima6, 2), "%\n")
 ```
 
 **RANDOM FOREST**
+
+**Random Forest 1**
 
 ```{r, eval=FALSE}
 
@@ -774,6 +758,7 @@ result3
 # Las consolas de videojuego en un 95.5% se importan via miritima de Estados Unidos.
 
 ```
+
 ```{r, eval=FALSE}
 #Se imprime el Random Forest
 
@@ -782,7 +767,7 @@ plot(forest1)
 
 ```
 
-**RandomForest2**
+**Random Forest 2**
 
 ```{r, eval=FALSE}
 
@@ -836,8 +821,6 @@ resultex
 
 ```
 
-
-
 ```{r, eval=FALSE}
 
 #Se imprime el RF
@@ -847,7 +830,7 @@ plot(forest2)
 
 ```
 
-**RandomForest3**
+**Random Forest 3**
 
 ```{r, eval=FALSE}
 
@@ -903,8 +886,6 @@ resultim1
 
 ```
 
-
-
 ```{r, eval=FALSE}
 
 #Se Grafica el RF
@@ -913,12 +894,3 @@ plot(forest3)
 
 
 ```
-
-
-
-
-
-
-
-
-
